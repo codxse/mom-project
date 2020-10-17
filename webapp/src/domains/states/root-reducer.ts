@@ -2,7 +2,7 @@ import { UserReducer, userReducer } from './user/reducer';
 import { CombinedState, combineReducers } from 'redux';
 import { ActionsObservable, combineEpics, Epic, StateObservable } from 'redux-observable';
 import { catchError } from 'rxjs/operators';
-import { loginWithGoogleAccount, listenUserChanges } from '../use-cases/authentication';
+import { loginWithGoogleAccount, listenUserChanges, listenProfileChanges } from '../use-cases/authentication';
 
 export interface RootReducer {
   userReducer: UserReducer;
@@ -16,6 +16,7 @@ export const rootEpic: Epic = (action$: ActionsObservable<any>, store$: StateObs
   combineEpics(
     loginWithGoogleAccount,
     listenUserChanges,
+    listenProfileChanges,
   )(action$, store$, dependencies).pipe(
     catchError((error, source) => {
       console.log("FATAL ERROR", error);

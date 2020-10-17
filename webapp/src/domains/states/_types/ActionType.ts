@@ -5,15 +5,18 @@ export interface ActionType<DispatchString = any, Payload = any> extends Action 
   payload: Payload;
 }
 
-export interface LoadingPayload {
+export interface LoadingPayload<Data = any> {
   loading: boolean;
+  data: Data;
 }
 
 export interface DataPayload<Data = any> {
+  loading: false;
   data: Data;
 }
 
 export interface ErrorPayload<Err = any> {
+  loading: false;
   error: Err;
 }
 

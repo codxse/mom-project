@@ -1,7 +1,6 @@
 import { IAuthentication } from './_abstract/IAuthentication';
 import { User } from '../../../models/user';
 import * as firebase from 'firebase/app';
-import 'firebase/firestore';
 import 'firebase/auth';
 import { IFirebaseConfig } from '../../../config';
 
@@ -28,7 +27,13 @@ export class Authentication implements IAuthentication<User, any> {
         const userCredential: firebase.auth.UserCredential = await this._auth.signInWithPopup(provider);
         const user: firebase.User | null = userCredential.user;
         if (user) {
-          const myUser: User = new User(user.uid, user?.displayName || "Zenness", null, user.email, user.photoURL);
+          const myUser: User = new User({
+            _id: user.uid,
+            displayName: user.displayName || "Zenness",
+            email: user.email ?? undefined,
+            firstName: "-",
+            avatar: user.photoURL ?? undefined,
+          });
           resolve(myUser);
         } else {
           reject(new Error("User not found"));
@@ -43,7 +48,13 @@ export class Authentication implements IAuthentication<User, any> {
     return new Promise<User>(async (resolve, reject) => {
       this._auth.onAuthStateChanged(user => {
         if (user) {
-          resolve(new User(user.uid, user.displayName || "Zenness", null, user.email, user.photoURL));
+          resolve(new User({
+            _id: user.uid,
+            displayName: user.displayName || "Zenness",
+            email: user.email ?? undefined,
+            firstName: "-",
+            avatar: user.photoURL ?? undefined,
+          }));
         } else {
           reject(new Error("User not found"))
         }

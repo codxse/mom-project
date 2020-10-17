@@ -9,6 +9,8 @@ import {
   initiateLoginWithGoogleRequest,
   listenOnUserChanges,
   ListenOnUserChanges,
+  initiateGetUserProfile,
+  InitiateGetUserProfile,
 } from './domains/states/user/actions';
 import { RootReducer } from './domains/states/root-reducer';
 import { UserReducer } from './domains/states/user/reducer';
@@ -16,16 +18,26 @@ import { User } from './models/user';
 
 
 interface IPApp {
+  userReducer: UserReducer;
   initiateLoginWithGoogleRequest: InitiateLoginWithGoogle;
   clearStateGoogleLogin: ClearStateGoogleLogin;
   listenOnUserChanges: ListenOnUserChanges;
-  userReducer: UserReducer;
+  initiateGetUserProfile: InitiateGetUserProfile;
 }
 
 export class App extends React.Component<IPApp, any> {
 
   componentDidMount(): void {
     this.props.listenOnUserChanges();
+  }
+
+  componentDidUpdate(prevProps: Readonly<IPApp>, prevState: Readonly<any>, snapshot?: any): void {
+    const nextUid = this.props.userReducer.currentUser.data?._id;
+    const prevUid = prevProps.userReducer.currentUser.data?._id;
+    if (nextUid !== prevUid) {
+      console.log("A");
+      this.props.initiateGetUserProfile("VGpkGUvJOjgeSe7kncS4");
+    }
   }
 
   componentWillUnmount(): void {
@@ -58,5 +70,5 @@ export class App extends React.Component<IPApp, any> {
 }
 
 const mapStateToProps = (state: RootReducer) => ({ ...state, });
-const mapDispatchToProps = { initiateLoginWithGoogleRequest, clearStateGoogleLogin, listenOnUserChanges };
+const mapDispatchToProps = { initiateLoginWithGoogleRequest, clearStateGoogleLogin, listenOnUserChanges, initiateGetUserProfile };
 export default connect(mapStateToProps, mapDispatchToProps)(App);
