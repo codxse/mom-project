@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2020 by anonymous (http://jsbin.com/xabutoqiso/16/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+<html>
+  <head>
+    <title>Hello!</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/@reactivex/rxjs@5.5.6/dist/global/Rx.js"></script>
+  </head>
+  <body>
+    <h1>Holla</h1>
+    <canvas id="myCanvas" width="1000" height="800"
+style="border:1px solid #c3c3c3;">
+Your browser does not support the canvas element.
+</canvas>
+  <script id="jsbin-javascript">
+
+const { fromEvent } = Rx.Observable;
+const { skipUntil, takeUntil, repeat } = Rx.operators;
+
+const move$ = fromEvent(document, 'mousemove');
+const down$ = fromEvent(document, 'mousedown');
+const up$ = fromEvent(document, 'mouseup');
+
+const paints$ = move$.pipe(
+    skipUntil(down$),
+    takeUntil(up$),
+    repeat()
+);
+
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
+const rect = canvas.getBoundingClientRect();
+
+paints$.subscribe(function(mouseEvent) {
+  const {clientX, clientY} = mouseEvent;
+  const {left, top} = rect;
+  const x = clientX - left;
+  const y = clientY - top;
+  
+  console.log({x, y});
+  ctx.beginPath();
+  ctx.arc(x, y, 10, 0, 2 * Math.PI);
+  ctx.strokeStyle = "#FF0000";
+  ctx.fillStyle = "#FF0000";
+  ctx.fill();
+});
+</script>
+</body>
+</html>

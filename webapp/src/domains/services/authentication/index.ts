@@ -44,23 +44,13 @@ export class Authentication implements IAuthentication<User, any> {
     });
   }
 
-  onUserAuth(): Promise<User> {
-    return new Promise<User>(async (resolve, reject) => {
-      this._auth.onAuthStateChanged(user => {
-        if (user) {
-          resolve(new User({
-            _id: user.uid,
-            displayName: user.displayName || "Zenness",
-            email: user.email ?? undefined,
-            firstName: "-",
-            avatar: user.photoURL ?? undefined,
-          }));
-        } else {
-          reject(new Error("User not found"))
-        }
-      });
-    });
-  }
+  get auth() {
+    if (this._auth) {
+      return this._auth;
+    }
+    this._auth = firebase.auth();
+    return this._auth;
+  };
 
   signOut(): Promise<void> {
     return this._auth.signOut();
