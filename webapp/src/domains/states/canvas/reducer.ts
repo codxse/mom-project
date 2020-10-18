@@ -7,6 +7,10 @@ export interface CanvasReducer {
     data: any,
     error: any,
     loading: boolean,
+  };
+  setting: {
+    penColor: string;
+    penSize: number;
   }
 }
 
@@ -15,11 +19,31 @@ const DEFAULT_STATE: CanvasReducer = {
     data: null,
     error: null,
     loading: false,
+  },
+  setting: {
+    penColor: "#FF0000",
+    penSize: 10,
   }
 };
 
 export const canvasReducer = (state: CanvasReducer = DEFAULT_STATE, action: Action | ActionType): CanvasReducer => {
   switch (action.type) {
+    case CanvasActions.CHANGE_PEN_COLOR:
+      return {
+        ...state,
+        setting: {
+          ...state.setting,
+          penColor: (action as ActionType).payload,
+        }
+      };
+    case CanvasActions.CHANGE_PEN_SIZE:
+      return {
+        ...state,
+        setting: {
+          ...state.setting,
+          penSize: (action as ActionType).payload,
+        }
+      };
     case CanvasActions.ERROR_READ_CANVAS_DRAWING:
       return {
         ...state,

@@ -25,7 +25,21 @@ export const clearStateDrawing: ClearStateDrawing = () => ({
   type: CanvasActions.STOP_LISTEN_TO_FIREBASE_DRAWING,
 });
 
-export const errorDrawInCanvas = (error: any) => ({
+export type ErrorDrawInCanvas = (error: any) => ActionType<CanvasActions.ERROR_READ_CANVAS_DRAWING, any>;
+export const errorDrawInCanvas: ErrorDrawInCanvas = (error: any) => ({
   type: CanvasActions.ERROR_READ_CANVAS_DRAWING,
   payload: error,
 });
+
+export type ChangePenColor = (color: string) => ActionType<CanvasActions.CHANGE_PEN_COLOR>;
+export const changePenColor: ChangePenColor = (color: string) => ({
+  type: CanvasActions.CHANGE_PEN_COLOR,
+  payload: color,
+});
+
+export type ChangePenSize = (size: number) => ActionType<CanvasActions.CHANGE_PEN_SIZE>;
+export const changePenSize: ChangePenSize = (size: number) => ({
+  type: CanvasActions.CHANGE_PEN_SIZE,
+  payload: size,
+});
+

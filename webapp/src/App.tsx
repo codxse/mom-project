@@ -13,13 +13,19 @@ import {
   clearStateGetUserProfile,
   ClearStateGetUserProfile,
 } from './domains/states/user/actions';
-import { initiateMouse, InitiateMouse, clearStateDrawing, ClearStateDrawing, readCanvasDrawing, ReadCanvasDrawing } from './domains/states/canvas/actions';
+import { initiateMouse, InitiateMouse, clearStateDrawing, ClearStateDrawing, readCanvasDrawing, ReadCanvasDrawing,
+  changePenColor, ChangePenColor, changePenSize, ChangePenSize,
+} from './domains/states/canvas/actions';
 import { RootReducer } from './domains/states/root-reducer';
 import { UserReducer } from './domains/states/user/reducer';
-import { User } from './models/user/User';
+import { User } from './models/User';
+import { SketchPicker } from 'react-color';
+import { CanvasReducer } from './domains/states/canvas/reducer';
+
 
 interface IPApp {
   userReducer: UserReducer;
+  canvasReducer: CanvasReducer;
   initiateLoginWithGoogleRequest: InitiateLoginWithGoogle;
   clearStateGoogleLogin: ClearStateGoogleLogin;
   listenOnUserChanges: ListenOnUserChanges;
@@ -28,6 +34,8 @@ interface IPApp {
   initiateMouse: InitiateMouse;
   readCanvasDrawing: ReadCanvasDrawing;
   clearStateDrawing: ClearStateDrawing;
+  changePenColor: ChangePenColor;
+  changePenSize: ChangePenSize;
 }
 
 export class App extends React.Component<IPApp, any> {
@@ -60,20 +68,46 @@ export class App extends React.Component<IPApp, any> {
 
   render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
     const user: User | null = this.props.userReducer.currentUser.data;
-
+    const canvasSetting = this.props.canvasReducer.setting;
     return (
       <div className="App">
-        <h1>{user?.firstName || "-"}</h1>
-        <canvas
-          ref={this._canvasRef}
-          id="myCanvas"
-          width="1000"
-          height="800"
-          style={{
-            border: "1px solid #c3c3c3",
-          }}>
-          Your browser does not support the canvas element.
-        </canvas>
+        <h1 className={"text-6xl font-sans"}>{user?.firstName || "-"}</h1>
+        <div className={"flex justify-center"}>
+          <canvas
+            ref={this._canvasRef}
+            id="myCanvas"
+            width="1000"
+            height="800"
+            style={{
+              backgroundColor: "white",
+              border: "1px solid #c3c3c3",
+            }}>
+            Your browser does not support the canvas element.
+          </canvas>
+          <div className={"ml-3"}>
+            <SketchPicker
+              className={"mb-3"}
+              color={canvasSetting.penColor}
+              disableAlpha
+              onChange={(color, event) => {
+                this.props.changePenColor(color.hex);
+              }}
+              onChangeComplete={(color) => this.props.changePenColor(color.hex)}
+            />
+            <div className={"w-full h-8 mb-3 shadow-lg rounded"} style={{backgroundColor: canvasSetting.penColor, border: "1px solid #c3c3c3"}}/>
+            <div className={"w-full"}>
+              <input
+                type="range" min="1" max="100" value={canvasSetting.penSize} className={"w-full mb-3"}
+                onChange={(event) => {
+                  const size = parseInt(event.target.value);
+                  this.props.changePenSize(size);
+                }}
+              />
+              <span>Pen Size:</span>
+              <h2 className={"text-6xl font-sans"}>{canvasSetting.penSize}</h2>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
@@ -82,6 +116,6 @@ export class App extends React.Component<IPApp, any> {
 const mapStateToProps = (state: RootReducer) => ({ ...state, });
 const mapDispatchToProps = {
   initiateLoginWithGoogleRequest, clearStateGoogleLogin, listenOnUserChanges, initiateGetUserProfile,
-  clearStateGetUserProfile, initiateMouse, readCanvasDrawing, clearStateDrawing,
+  clearStateGetUserProfile, initiateMouse, readCanvasDrawing, clearStateDrawing, changePenSize, changePenColor,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(App);

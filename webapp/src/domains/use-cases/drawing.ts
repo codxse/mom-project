@@ -20,21 +20,19 @@ const createPath = (canvas: HTMLCanvasElement, x: number, y: number, thick: numb
   }
 };
 
-const drawing = (event: MouseEvent, canvas: HTMLCanvasElement): Promise<any> | null => {
+const drawing = (event: MouseEvent, canvas: HTMLCanvasElement, color: string, size: number): Promise<any> | null => {
   const ctx = canvas.getContext("2d");
   const {left, top} = canvas.getBoundingClientRect();
   const {clientX, clientY} = event;
   const X = clientX - left;
   const Y = clientY - top;
-  const COLOR = "#FF0000";
-  const THICK = 10;
   if (ctx) {
-    createPath(canvas, X, Y, THICK, COLOR);
+    createPath(canvas, X, Y, size, color);
     return System.instance.database.setDoc("canvas", {
       x: X,
       y: Y,
-      color: COLOR,
-      thick: THICK,
+      color: color,
+      thick: size,
     });
   }
   return null;
@@ -58,15 +56,14 @@ export const drawInCanvas = (
           takeUntil($mouseUp),
           repeat(),
         ).pipe(
-          tap(mouseEvent => {
-            console.log(mouseEvent);
-          }),
-          switchMap(async mouseEvent => {
-            return drawing(mouseEvent, canvas);
+          withLatestFrom(store$),
+          switchMap(async ([mouseEvent, state]) => {
+            return drawing(mouseEvent, canvas, state.canvasReducer.setting.penColor, state.canvasReducer.setting.penSize);
           }),
           retryWhen(error$ => {
             return error$.pipe(
-              tap( mouseEvent => drawing(mouseEvent, canvas)),
+              withLatestFrom(store$),
+              tap( ([mouseEvent, state]) => drawing(mouseEvent, canvas, state.canvasReducer.setting.penColor, state.canvasReducer.setting.penSize)),
             );
           }),
           mapTo(mapDawInCanvas())
