@@ -20,7 +20,7 @@ const createPath = (canvas: HTMLCanvasElement, x: number, y: number, thick: numb
   }
 };
 
-const drawing = (event: MouseEvent, canvas: HTMLCanvasElement, color: string, size: number): Promise<any> | null => {
+const drawing = (event: MouseEvent, canvas: HTMLCanvasElement, color: string, size: number, logged?: boolean): Promise<any> | null => {
   const ctx = canvas.getContext("2d");
   const {left, top} = canvas.getBoundingClientRect();
   const {clientX, clientY} = event;
@@ -28,12 +28,15 @@ const drawing = (event: MouseEvent, canvas: HTMLCanvasElement, color: string, si
   const Y = clientY - top;
   if (ctx) {
     createPath(canvas, X, Y, size, color);
-    return System.instance.database.setDoc("canvas", {
-      x: X,
-      y: Y,
-      color: color,
-      thick: size,
-    });
+    if (logged) {
+      return System.instance.database.setDoc("canvas", {
+        x: X,
+        y: Y,
+        color: color,
+        thick: size,
+      });
+    }
+    return null;
   }
   return null;
 };
@@ -58,12 +61,16 @@ export const drawInCanvas = (
         ).pipe(
           withLatestFrom(store$),
           switchMap(async ([mouseEvent, state]) => {
-            return drawing(mouseEvent, canvas, state.canvasReducer.setting.penColor, state.canvasReducer.setting.penSize);
+            const user = Boolean(state.userReducer.currentUser.data?._id);
+            return drawing(mouseEvent, canvas, state.canvasReducer.setting.penColor, state.canvasReducer.setting.penSize, user);
           }),
           retryWhen(error$ => {
             return error$.pipe(
               withLatestFrom(store$),
-              tap( ([mouseEvent, state]) => drawing(mouseEvent, canvas, state.canvasReducer.setting.penColor, state.canvasReducer.setting.penSize)),
+              tap( ([mouseEvent, state]) => {
+                const user = Boolean(state.userReducer.currentUser.data?._id);
+                drawing(mouseEvent, canvas, state.canvasReducer.setting.penColor, state.canvasReducer.setting.penSize, user);
+              }),
             );
           }),
           mapTo(mapDawInCanvas())

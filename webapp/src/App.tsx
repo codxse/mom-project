@@ -71,7 +71,7 @@ export class App extends React.Component<IPApp, any> {
     const canvasSetting = this.props.canvasReducer.setting;
     return (
       <div className="App">
-        <h1 className={"text-6xl font-sans"}>{user?.firstName || "-"}</h1>
+        <h1 className={"text-6xl font-sans"}>Lets Drawing</h1>
         <div className={"flex justify-center"}>
           <canvas
             ref={this._canvasRef}
@@ -85,6 +85,22 @@ export class App extends React.Component<IPApp, any> {
             Your browser does not support the canvas element.
           </canvas>
           <div className={"ml-3"}>
+            {
+              user ?
+                <div
+                  style={{border: "1px solid #c3c3c3",}}
+                  className="flex flex-col bg-white rounded-lg p-6 shadow-lg mb-3 justify-center"
+                >
+                  <div className={"flex justify-center"}>
+                    <img className="h-16 w-16 md:h-24 md:w-24 rounded-full mx-auto md:mx-0 mb-3" src={user?.avatar} alt={user?.displayName}/>
+                  </div>
+                  <span>Hi, <b>{user?.displayName || user?.email}</b></span>
+                </div> :
+                <button
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-full mb-3"
+                  onClick={this.props.initiateLoginWithGoogleRequest}
+                >Login with Google</button>
+            }
             <SketchPicker
               className={"mb-3"}
               color={canvasSetting.penColor}
