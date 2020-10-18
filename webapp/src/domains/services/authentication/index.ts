@@ -1,5 +1,5 @@
 import { IAuthentication } from './_abstract/IAuthentication';
-import { User } from '../../../models/user';
+import { User } from '../../../models/User';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import { IFirebaseConfig } from '../../../config';

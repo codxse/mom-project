@@ -1,14 +1,12 @@
 import { ActionsObservable, ofType, StateObservable } from 'redux-observable';
 import { CanvasActions } from '../states/canvas/keys';
 import { catchError, map, mapTo, mergeMap, repeat, retryWhen, skipUntil, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
-import { clearStateDrawing, errorDrawInCanvas, mapDawInCanvas } from '../states/canvas/actions';
+import { errorDrawInCanvas, mapDawInCanvas } from '../states/canvas/actions';
 import { fromEvent, fromEventPattern } from 'rxjs';
 import { ActionType } from '../states/_types/ActionType';
 import { RootReducer } from '../states/root-reducer';
 import { System } from '../services/System';
 import { QuerySnapshot } from '../services/database';
-import { DrawingCoordinate } from '../../models/drawing-coordinate';
-import { UserActions } from '../states/user/keys';
 
 
 const createPath = (canvas: HTMLCanvasElement, x: number, y: number, thick: number, color: string): void => {
@@ -104,13 +102,6 @@ export const readCanvas = (
           }
           querySnapshot.forEach(doc => {
             const data: any = doc.data();
-            // const coordinate = new DrawingCoordinate({
-            //   _id: doc.id,
-            //   x: data.x,
-            //   y: data.y,
-            //   color: data.color,
-            //   thick: data.thick,
-            // });
             createPath(canvas, data.x, data.y, data.thick, data.color);
           });
           return mapDawInCanvas();

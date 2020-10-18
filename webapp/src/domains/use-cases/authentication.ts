@@ -22,7 +22,7 @@ import { ActionType } from '../states/_types/ActionType';
 import { RootReducer } from '../states/root-reducer';
 import { DocumentSnapshot } from '../services/database';
 import * as firebase from 'firebase/app';
-import { User } from '../../models/user';
+import { User } from '../../models/User';
 
 export const loginWithGoogleAccount = (action$: ActionsObservable<any>, store$: StateObservable<any>, dependency: any) => {
   return action$.pipe(

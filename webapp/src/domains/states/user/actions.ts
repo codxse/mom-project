@@ -1,5 +1,5 @@
 import { UserActions } from './keys';
-import { User } from '../../../models/user';
+import { User } from '../../../models/user/User';
 import { ActionType, DataPayload, ErrorPayload, LoadingPayload, ResetPayload } from '../_types/ActionType';
 
 

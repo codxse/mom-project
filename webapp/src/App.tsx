@@ -16,9 +16,7 @@ import {
 import { initiateMouse, InitiateMouse, clearStateDrawing, ClearStateDrawing, readCanvasDrawing, ReadCanvasDrawing } from './domains/states/canvas/actions';
 import { RootReducer } from './domains/states/root-reducer';
 import { UserReducer } from './domains/states/user/reducer';
-import { User } from './models/user';
-import { System } from './domains/services/System';
-
+import { User } from './models/user/User';
 
 interface IPApp {
   userReducer: UserReducer;
@@ -44,14 +42,6 @@ export class App extends React.Component<IPApp, any> {
     this.props.listenOnUserChanges();
     this.props.initiateMouse(this._canvasRef.current);
     this.props.readCanvasDrawing(this._canvasRef.current);
-    // const ref = System.instance.database.getCollection("/canvas");
-    // ref.onSnapshot((q) => {
-    //   console.log(2);
-    //   q.forEach(doc => {
-    //     const data: any = doc.data();
-    //     console.log(1, data);
-    //   });
-    // });
   }
 
   componentDidUpdate(prevProps: Readonly<IPApp>, prevState: Readonly<any>, snapshot?: any): void {

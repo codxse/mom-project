@@ -35,7 +35,6 @@ export class User implements IUser {
   }
 
   get _id(): string { return this.__id; }
-  set _id(id: string){ this.__id = id }
 
   get displayName(): string { return this._displayName; }
   set displayName(s: string) { this._displayName = s; }

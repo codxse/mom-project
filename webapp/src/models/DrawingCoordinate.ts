@@ -21,7 +21,6 @@ export class DrawingCoordinate implements IDrawingCoordinate {
     this._thick = args.thick;
   }
 
-  set _id(id: string) { this.__id = id }
   get _id(): string { return this.__id; }
 
   get x(): number { return this._x; }

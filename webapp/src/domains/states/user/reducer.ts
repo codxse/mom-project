@@ -1,6 +1,6 @@
 import { UserActions } from './keys';
 import { ActionType, PayloadState } from '../_types/ActionType';
-import { User } from '../../../models/user';
+import { User } from '../../../models/user/User';
 
 export interface UserReducer {
   currentUser: PayloadState<User | null>;
